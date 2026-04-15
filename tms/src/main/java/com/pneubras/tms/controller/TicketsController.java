@@ -1,6 +1,7 @@
 package com.pneubras.tms.controller;
 
 import com.pneubras.tms.dto.request.CreateTicketsRequest;
+import com.pneubras.tms.dto.request.UpdateTicketRequest;
 import com.pneubras.tms.dto.response.TicketsResponse;
 import com.pneubras.tms.service.TicketsService;
 import jakarta.transaction.Transactional;
@@ -36,5 +37,11 @@ public class TicketsController {
     @GetMapping("/{id}")
     public ResponseEntity<TicketsResponse> getTicketById(@PathVariable Long id) {
         return ticketsService.getTicketById(id);
+    }
+
+    @PatchMapping("/{id}")
+    @Transactional
+    public ResponseEntity<TicketsResponse> updateTicket(@PathVariable Long id, @RequestBody UpdateTicketRequest data) {
+        return ticketsService.updateTicket(id, data);
     }
 }

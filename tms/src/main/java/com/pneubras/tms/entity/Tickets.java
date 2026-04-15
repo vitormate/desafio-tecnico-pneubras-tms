@@ -67,4 +67,17 @@ public class Tickets {
 
         return dueHour;
     }
+
+    public void updateTicket(String title, String description) {
+        if (title == null && description == null) {
+            throw new RuntimeException("The update failed. No data found.");
+        }
+        if (title != null) {
+            this.title = title;
+        }
+        if (description != null) {
+            this.description = description;
+        }
+        this.updatedAt = LocalDateTime.now();
+    }
 }

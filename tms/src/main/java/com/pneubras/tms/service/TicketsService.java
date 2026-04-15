@@ -1,6 +1,7 @@
 package com.pneubras.tms.service;
 
 import com.pneubras.tms.dto.request.CreateTicketsRequest;
+import com.pneubras.tms.dto.request.UpdateTicketRequest;
 import com.pneubras.tms.dto.response.TicketsResponse;
 import com.pneubras.tms.repository.TicketsRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -39,6 +40,17 @@ public class TicketsService {
         Tickets ticket = ticketsRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Ticket not found with id: " + id)
         );
+
+        TicketsResponse dto = new TicketsResponse(ticket);
+        return ResponseEntity.ok(dto);
+    }
+
+    public ResponseEntity<TicketsResponse> updateTicket(Long id, UpdateTicketRequest data) {
+        Tickets ticket = ticketsRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Ticket not found with id: " + id)
+        );
+
+        ticket.updateTicket(data.title(), data.description());
 
         TicketsResponse dto = new TicketsResponse(ticket);
         return ResponseEntity.ok(dto);
