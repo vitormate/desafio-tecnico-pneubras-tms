@@ -3,6 +3,9 @@ package com.pneubras.tms.service;
 import com.pneubras.tms.dto.request.CreateTicketsRequest;
 import com.pneubras.tms.dto.response.TicketsResponse;
 import com.pneubras.tms.repository.TicketsRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -24,5 +27,10 @@ public class TicketsService {
         var uri = uriBuilder.path("/tickets/{id}").buildAndExpand(ticket.getId()).toUri();
         TicketsResponse dto = new TicketsResponse(ticket);
         return ResponseEntity.created(uri).body(dto);
+    }
+
+    public ResponseEntity<PagedModel<TicketsResponse>> getAll(Pageable pageable) {
+        PagedModel<TicketsResponse> tickets = new PagedModel<>(ticketsRepository.findAll(pageable).map(TicketsResponse::new));
+        return ResponseEntity.ok(tickets);
     }
 }
