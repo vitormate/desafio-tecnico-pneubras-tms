@@ -43,4 +43,28 @@ public class Tickets {
 
     @Column(name = "due_at", nullable = false)
     private LocalDateTime dueAt;
+
+    public Tickets(String title, String description, PriorityEnum priority, int hours) {
+        this.title = title;
+        this.description = description;
+        this.priority = priority;
+        this.status = StatusEnum.ABERTO;
+        this.createdAt = LocalDateTime.now();
+        this.dueAt = LocalDateTime.now().plusHours(hours);
+    }
+
+    public static int checkDueHour(PriorityEnum priority) {
+        int dueHour = 0;
+        if (priority == PriorityEnum.BAIXA) {
+            dueHour = 72;
+        } else if (priority == PriorityEnum.MEDIA) {
+            dueHour = 48;
+        } else if (priority == PriorityEnum.ALTA) {
+            dueHour = 24;
+        } else if (priority == PriorityEnum.CRITICA) {
+            dueHour = 8;
+        }
+
+        return dueHour;
+    }
 }
