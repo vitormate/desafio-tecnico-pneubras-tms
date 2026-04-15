@@ -59,4 +59,10 @@ public class TicketsController {
     public ResponseEntity<TicketsResponse> resolveTicket(@PathVariable Long id) throws BadRequestException {
         return ticketsService.resolveTicket(id);
     }
+
+    @PutMapping("/close/{id}")
+    @Transactional
+    public ResponseEntity<TicketsResponse> closeTicket(@PathVariable Long id) throws BadRequestException {
+        return ticketsService.closeTicket(id);
+    }
 }

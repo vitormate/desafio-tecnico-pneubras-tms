@@ -94,4 +94,16 @@ public class TicketsService {
 
         return ResponseEntity.ok(new TicketsResponse(ticket));
     }
+
+    public ResponseEntity<TicketsResponse> closeTicket(Long id) throws BadRequestException {
+        Tickets ticket = ticketsRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Ticket not found with id: " + id)
+        );
+
+        ticket.checkStatusClose();
+        ticket.setUpdatedAt(LocalDateTime.now());
+        ticket.setStatus(StatusEnum.FECHADO);
+
+        return ResponseEntity.ok(new TicketsResponse(ticket));
+    }
 }

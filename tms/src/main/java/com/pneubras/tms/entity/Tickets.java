@@ -103,4 +103,10 @@ public class Tickets {
             throw new BadRequestException();
         }
     }
+
+    public void checkStatusClose() throws BadRequestException {
+        if (this.getStatus() != StatusEnum.RESOLVIDO) {
+            throw new BadRequestException();
+        }
+    }
 }
