@@ -32,4 +32,9 @@ public class TicketsController {
     public ResponseEntity<PagedModel<TicketsResponse>> getAllTickets(@PageableDefault(sort = {"id"}, size = 30, page = 0) Pageable pageable) {
         return ticketsService.getAll(pageable);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<TicketsResponse> getTicketById(@PathVariable Long id) {
+        return ticketsService.getTicketById(id);
+    }
 }

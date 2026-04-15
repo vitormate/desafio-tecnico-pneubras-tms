@@ -3,6 +3,7 @@ package com.pneubras.tms.service;
 import com.pneubras.tms.dto.request.CreateTicketsRequest;
 import com.pneubras.tms.dto.response.TicketsResponse;
 import com.pneubras.tms.repository.TicketsRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
@@ -32,5 +33,14 @@ public class TicketsService {
     public ResponseEntity<PagedModel<TicketsResponse>> getAll(Pageable pageable) {
         PagedModel<TicketsResponse> tickets = new PagedModel<>(ticketsRepository.findAll(pageable).map(TicketsResponse::new));
         return ResponseEntity.ok(tickets);
+    }
+
+    public ResponseEntity<TicketsResponse> getTicketById(Long id) {
+        Tickets ticket = ticketsRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Ticket not found with id: " + id)
+        );
+
+        TicketsResponse dto = new TicketsResponse(ticket);
+        return ResponseEntity.ok(dto);
     }
 }
