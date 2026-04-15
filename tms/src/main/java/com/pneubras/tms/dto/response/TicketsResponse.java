@@ -1,6 +1,7 @@
 package com.pneubras.tms.dto.response;
 
 import com.pneubras.tms.entity.Tickets;
+import com.pneubras.tms.entity.User;
 import com.pneubras.tms.utils.enums.PriorityEnum;
 import com.pneubras.tms.utils.enums.StatusEnum;
 
@@ -14,7 +15,9 @@ public record TicketsResponse(
         StatusEnum status,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
-        LocalDateTime dueAt
+        LocalDateTime dueAt,
+        String createdBy,
+        String agent
 ) {
     public TicketsResponse(Tickets t) {
         this(
@@ -25,7 +28,9 @@ public record TicketsResponse(
                 t.getStatus(),
                 t.getCreatedAt(),
                 t.getUpdatedAt(),
-                t.getDueAt()
+                t.getDueAt(),
+                t.getCreatedBy().getLogin(),
+                t.getAgent() != null ? t.getAgent().getLogin() : ""
         );
     }
 }

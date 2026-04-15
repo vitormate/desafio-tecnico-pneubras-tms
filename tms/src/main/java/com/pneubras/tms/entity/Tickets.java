@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.coyote.BadRequestException;
 
 import java.time.LocalDateTime;
 
@@ -44,15 +45,25 @@ public class Tickets {
     @Column(name = "due_at", nullable = false)
     private LocalDateTime dueAt;
 
-    public Tickets(String title, String description, PriorityEnum priority, int hours) {
+    @ManyToOne
+    @JoinColumn(name = "created_by")
+    private User createdBy;
+
+    @ManyToOne
+    @JoinColumn(name = "agent")
+    private User agent;
+
+    public Tickets(String title, String description, PriorityEnum priority, int hours, User createdBy) {
         this.title = title;
         this.description = description;
         this.priority = priority;
         this.status = StatusEnum.ABERTO;
         this.createdAt = LocalDateTime.now();
         this.dueAt = LocalDateTime.now().plusHours(hours);
+        this.createdBy = createdBy;
     }
 
+//  Tentar melhorar esse método
     public static int checkDueHour(PriorityEnum priority) {
         int dueHour = 0;
         if (priority == PriorityEnum.BAIXA) {
@@ -79,5 +90,17 @@ public class Tickets {
             this.description = description;
         }
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public void checkStatusAsign() throws BadRequestException {
+        if (this.getStatus() != StatusEnum.ABERTO) {
+            throw new BadRequestException();
+        }
+    }
+
+    public void checkStatusResolve() throws BadRequestException {
+        if (this.getStatus() != StatusEnum.EM_PROGRESSO) {
+            throw new BadRequestException();
+        }
     }
 }
