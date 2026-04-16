@@ -2,6 +2,7 @@ package com.pneubras.tms.service;
 
 import com.pneubras.tms.dto.request.AsignTicketRequest;
 import com.pneubras.tms.dto.request.CreateTicketsRequest;
+import com.pneubras.tms.dto.request.ReturnTicketRequest;
 import com.pneubras.tms.dto.request.UpdateTicketRequest;
 import com.pneubras.tms.dto.response.TicketsResponse;
 import com.pneubras.tms.entity.User;
@@ -103,6 +104,18 @@ public class TicketsService {
         ticket.checkStatusClose();
         ticket.setUpdatedAt(LocalDateTime.now());
         ticket.setStatus(StatusEnum.FECHADO);
+
+        return ResponseEntity.ok(new TicketsResponse(ticket));
+    }
+
+    public ResponseEntity<TicketsResponse> returnTicket(Long id, ReturnTicketRequest data) throws BadRequestException {
+        Tickets ticket = ticketsRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Ticket not found with id: " + id)
+        );
+
+        ticket.checkStatusClose();
+        ticket.setUpdatedAt(LocalDateTime.now());
+        ticket.setStatus(StatusEnum.EM_PROGRESSO);
 
         return ResponseEntity.ok(new TicketsResponse(ticket));
     }

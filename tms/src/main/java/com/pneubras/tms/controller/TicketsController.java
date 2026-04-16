@@ -2,6 +2,7 @@ package com.pneubras.tms.controller;
 
 import com.pneubras.tms.dto.request.AsignTicketRequest;
 import com.pneubras.tms.dto.request.CreateTicketsRequest;
+import com.pneubras.tms.dto.request.ReturnTicketRequest;
 import com.pneubras.tms.dto.request.UpdateTicketRequest;
 import com.pneubras.tms.dto.response.TicketsResponse;
 import com.pneubras.tms.service.TicketsService;
@@ -64,5 +65,11 @@ public class TicketsController {
     @Transactional
     public ResponseEntity<TicketsResponse> closeTicket(@PathVariable Long id) throws BadRequestException {
         return ticketsService.closeTicket(id);
+    }
+
+    @PutMapping("/return/{id}")
+    @Transactional
+    public ResponseEntity<TicketsResponse> returnTicket(@PathVariable Long id, ReturnTicketRequest data) throws BadRequestException {
+        return ticketsService.returnTicket(id, data);
     }
 }
