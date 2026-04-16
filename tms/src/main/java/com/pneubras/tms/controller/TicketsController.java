@@ -1,15 +1,12 @@
 package com.pneubras.tms.controller;
 
-import com.pneubras.tms.dto.request.AsignTicketRequest;
+import com.pneubras.tms.dto.request.AssignTicketRequest;
 import com.pneubras.tms.dto.request.CreateTicketsRequest;
 import com.pneubras.tms.dto.request.ReturnTicketRequest;
 import com.pneubras.tms.dto.request.UpdateTicketRequest;
 import com.pneubras.tms.dto.response.TicketsResponse;
 import com.pneubras.tms.service.TicketsService;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import org.apache.coyote.BadRequestException;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedModel;
@@ -27,49 +24,52 @@ public class TicketsController {
         this.ticketsService = ticketsService;
     }
 
-    @PostMapping("new")
-    @Transactional
+    @PostMapping
     public ResponseEntity<TicketsResponse> createTickets(@RequestBody @Valid CreateTicketsRequest data, UriComponentsBuilder uriBuilder) {
-        return ticketsService.createTickets(data, uriBuilder);
+        TicketsResponse dto = ticketsService.createTickets(data);
+        var uri = uriBuilder.path("/tickets/{id}").buildAndExpand(dto.id()).toUri();
+        return ResponseEntity.created(uri).body(dto);
     }
 
     @GetMapping
     public ResponseEntity<PagedModel<TicketsResponse>> getAllTickets(@PageableDefault(sort = {"id"}, size = 30, page = 0) Pageable pageable) {
-        return ticketsService.getAll(pageable);
+        PagedModel<TicketsResponse> dto = ticketsService.getAll(pageable);
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<TicketsResponse> getTicketById(@PathVariable Long id) {
-        return ticketsService.getTicketById(id);
+        TicketsResponse dto = ticketsService.getTicketById(id);
+        return ResponseEntity.ok(dto);
     }
 
     @PatchMapping("/{id}")
-    @Transactional
     public ResponseEntity<TicketsResponse> updateTicket(@PathVariable Long id, @RequestBody UpdateTicketRequest data) {
-        return ticketsService.updateTicket(id, data);
+        TicketsResponse dto = ticketsService.updateTicket(id, data);
+        return ResponseEntity.ok(dto);
     }
 
-    @PutMapping("/asign/{id}")
-    @Transactional
-    public ResponseEntity<TicketsResponse> asignTicket(@PathVariable Long id, @RequestBody AsignTicketRequest data) throws BadRequestException {
-        return ticketsService.asignTicket(id, data);
+    @PatchMapping("/{id}/assign")
+    public ResponseEntity<TicketsResponse> assignTicket(@PathVariable Long id, @RequestBody @Valid AssignTicketRequest data) {
+        TicketsResponse dto = ticketsService.assignTicket(id, data);
+        return ResponseEntity.ok(dto);
     }
 
-    @PutMapping("/resolve/{id}")
-    @Transactional
-    public ResponseEntity<TicketsResponse> resolveTicket(@PathVariable Long id) throws BadRequestException {
-        return ticketsService.resolveTicket(id);
+    @PatchMapping("/{id}/resolve")
+    public ResponseEntity<TicketsResponse> resolveTicket(@PathVariable Long id) {
+        TicketsResponse dto = ticketsService.resolveTicket(id);
+        return ResponseEntity.ok(dto);
     }
 
-    @PutMapping("/close/{id}")
-    @Transactional
-    public ResponseEntity<TicketsResponse> closeTicket(@PathVariable Long id) throws BadRequestException {
-        return ticketsService.closeTicket(id);
+    @PatchMapping("/{id}/close")
+    public ResponseEntity<TicketsResponse> closeTicket(@PathVariable Long id) {
+        TicketsResponse dto = ticketsService.closeTicket(id);
+        return ResponseEntity.ok(dto);
     }
 
-    @PutMapping("/return/{id}")
-    @Transactional
-    public ResponseEntity<TicketsResponse> returnTicket(@PathVariable Long id, ReturnTicketRequest data) throws BadRequestException {
-        return ticketsService.returnTicket(id, data);
+    @PatchMapping("/{id}/return")
+    public ResponseEntity<TicketsResponse> returnTicket(@PathVariable Long id, @RequestBody @Valid ReturnTicketRequest data) {
+        TicketsResponse dto = ticketsService.returnTicket(id, data);
+        return ResponseEntity.ok(dto);
     }
 }

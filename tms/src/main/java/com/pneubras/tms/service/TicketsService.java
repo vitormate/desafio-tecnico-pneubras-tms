@@ -1,6 +1,6 @@
 package com.pneubras.tms.service;
 
-import com.pneubras.tms.dto.request.AsignTicketRequest;
+import com.pneubras.tms.dto.request.AssignTicketRequest;
 import com.pneubras.tms.dto.request.CreateTicketsRequest;
 import com.pneubras.tms.dto.request.ReturnTicketRequest;
 import com.pneubras.tms.dto.request.UpdateTicketRequest;
@@ -11,12 +11,10 @@ import com.pneubras.tms.repository.TicketsRepository;
 import com.pneubras.tms.repository.UserRepository;
 import com.pneubras.tms.utils.enums.StatusEnum;
 import jakarta.persistence.EntityNotFoundException;
-import org.apache.coyote.BadRequestException;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDateTime;
 
@@ -31,7 +29,8 @@ public class TicketsService {
         this.userRepository = userRepository;
     }
 
-    public ResponseEntity<TicketsResponse> createTickets(CreateTicketsRequest data, UriComponentsBuilder uriBuilder) {
+    @Transactional
+    public TicketsResponse createTickets(CreateTicketsRequest data) {
         User createdBy = userRepository.findByLogin(data.login()).orElseThrow(
                 () -> new EntityNotFoundException("User not found with login: " + data.login())
         );
@@ -39,34 +38,35 @@ public class TicketsService {
         int hours = Tickets.checkDueHour(data.priority());
         Tickets ticket = new Tickets(data.title(), data.description(), data.priority(), hours, createdBy);
         ticketsRepository.save(ticket);
-        var uri = uriBuilder.path("/tickets/{id}").buildAndExpand(ticket.getId()).toUri();
-        return ResponseEntity.created(uri).body(new TicketsResponse(ticket));
+        return new TicketsResponse(ticket);
     }
 
-    public ResponseEntity<PagedModel<TicketsResponse>> getAll(Pageable pageable) {
+    public PagedModel<TicketsResponse> getAll(Pageable pageable) {
         PagedModel<TicketsResponse> tickets = new PagedModel<>(ticketsRepository.findAll(pageable).map(TicketsResponse::new));
-        return ResponseEntity.ok(tickets);
+        return tickets;
     }
 
-    public ResponseEntity<TicketsResponse> getTicketById(Long id) {
+    public TicketsResponse getTicketById(Long id) {
         Tickets ticket = ticketsRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Ticket not found with id: " + id)
         );
 
-        return ResponseEntity.ok(new TicketsResponse(ticket));
+        return new TicketsResponse(ticket);
     }
 
-    public ResponseEntity<TicketsResponse> updateTicket(Long id, UpdateTicketRequest data) {
+    @Transactional
+    public TicketsResponse updateTicket(Long id, UpdateTicketRequest data) {
         Tickets ticket = ticketsRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Ticket not found with id: " + id)
         );
 
         ticket.updateTicket(data.title(), data.description());
 
-        return ResponseEntity.ok(new TicketsResponse(ticket));
+        return new TicketsResponse(ticket);
     }
 
-    public ResponseEntity<TicketsResponse> asignTicket(Long id, AsignTicketRequest data) throws BadRequestException {
+    @Transactional
+    public TicketsResponse assignTicket(Long id, AssignTicketRequest data) {
         Tickets ticket = ticketsRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Ticket not found with id: " + id)
         );
@@ -75,15 +75,16 @@ public class TicketsService {
                 () -> new EntityNotFoundException("User not found with login: " + data.login())
         );
 
-        ticket.checkStatusAsign();
+        ticket.checkStatusAssign();
         ticket.setAgent(agent);
         ticket.setUpdatedAt(LocalDateTime.now());
         ticket.setStatus(StatusEnum.EM_PROGRESSO);
 
-        return ResponseEntity.ok(new TicketsResponse(ticket));
+        return new TicketsResponse(ticket);
     }
 
-    public ResponseEntity<TicketsResponse> resolveTicket(Long id) throws BadRequestException {
+    @Transactional
+    public TicketsResponse resolveTicket(Long id) {
         Tickets ticket = ticketsRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Ticket not found with id: " + id)
         );
@@ -92,10 +93,11 @@ public class TicketsService {
         ticket.setUpdatedAt(LocalDateTime.now());
         ticket.setStatus(StatusEnum.RESOLVIDO);
 
-        return ResponseEntity.ok(new TicketsResponse(ticket));
+        return new TicketsResponse(ticket);
     }
 
-    public ResponseEntity<TicketsResponse> closeTicket(Long id) throws BadRequestException {
+    @Transactional
+    public TicketsResponse closeTicket(Long id) {
         Tickets ticket = ticketsRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Ticket not found with id: " + id)
         );
@@ -104,10 +106,11 @@ public class TicketsService {
         ticket.setUpdatedAt(LocalDateTime.now());
         ticket.setStatus(StatusEnum.FECHADO);
 
-        return ResponseEntity.ok(new TicketsResponse(ticket));
+        return new TicketsResponse(ticket);
     }
 
-    public ResponseEntity<TicketsResponse> returnTicket(Long id, ReturnTicketRequest data) throws BadRequestException {
+    @Transactional
+    public TicketsResponse returnTicket(Long id, ReturnTicketRequest data) {
         Tickets ticket = ticketsRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Ticket not found with id: " + id)
         );
@@ -117,6 +120,6 @@ public class TicketsService {
         ticket.setDescription(data.description());
         ticket.setStatus(StatusEnum.EM_PROGRESSO);
 
-        return ResponseEntity.ok(new TicketsResponse(ticket));
+        return new TicketsResponse(ticket);
     }
 }

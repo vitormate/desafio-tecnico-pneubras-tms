@@ -2,7 +2,7 @@ package com.pneubras.tms.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 
-public record AsignTicketRequest(
+public record AssignTicketRequest(
         @NotNull String login
 ) {
 }

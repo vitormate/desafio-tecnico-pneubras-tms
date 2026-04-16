@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.coyote.BadRequestException;
 
 import java.time.LocalDateTime;
 
@@ -92,21 +91,21 @@ public class Tickets {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public void checkStatusAsign() throws BadRequestException {
+    public void checkStatusAssign() {
         if (this.getStatus() != StatusEnum.ABERTO) {
-            throw new BadRequestException();
+            throw new RuntimeException("The status should be ABERTO. Status: " + this.getStatus());
         }
     }
 
-    public void checkStatusResolve() throws BadRequestException {
+    public void checkStatusResolve() {
         if (this.getStatus() != StatusEnum.EM_PROGRESSO) {
-            throw new BadRequestException();
+            throw new RuntimeException("The status should be EM_PROGRESSO. Status: " + this.getStatus());
         }
     }
 
-    public void checkStatusClose() throws BadRequestException {
+    public void checkStatusClose() {
         if (this.getStatus() != StatusEnum.RESOLVIDO) {
-            throw new BadRequestException();
+            throw new RuntimeException("The status should be RESOLVIDO. Status: " + this.getStatus());
         }
     }
 }
