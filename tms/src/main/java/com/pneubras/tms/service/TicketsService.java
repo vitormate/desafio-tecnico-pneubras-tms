@@ -5,19 +5,18 @@ import com.pneubras.tms.dto.request.CreateTicketsRequest;
 import com.pneubras.tms.dto.request.ReturnTicketRequest;
 import com.pneubras.tms.dto.request.UpdateTicketRequest;
 import com.pneubras.tms.dto.response.TicketsResponse;
+import com.pneubras.tms.entity.Tickets;
 import com.pneubras.tms.entity.User;
 import com.pneubras.tms.repository.TicketsRepository;
 import com.pneubras.tms.repository.UserRepository;
 import com.pneubras.tms.utils.enums.StatusEnum;
 import jakarta.persistence.EntityNotFoundException;
 import org.apache.coyote.BadRequestException;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
-import com.pneubras.tms.entity.Tickets;
 
 import java.time.LocalDateTime;
 
@@ -115,6 +114,7 @@ public class TicketsService {
 
         ticket.checkStatusClose();
         ticket.setUpdatedAt(LocalDateTime.now());
+        ticket.setDescription(data.description());
         ticket.setStatus(StatusEnum.EM_PROGRESSO);
 
         return ResponseEntity.ok(new TicketsResponse(ticket));
