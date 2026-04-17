@@ -1,6 +1,7 @@
 package com.pneubras.tms.service;
 
 import com.pneubras.tms.dto.request.AssignTicketRequest;
+import com.pneubras.tms.dto.request.CreateTicketsRequest;
 import com.pneubras.tms.dto.request.UpdateTicketRequest;
 import com.pneubras.tms.dto.response.TicketsResponse;
 import com.pneubras.tms.entity.Tickets;
@@ -46,11 +47,10 @@ class TicketsServiceTest {
         this.user = new User(1L, "admin", "123456", RoleEnum.ADMIN);
         this.agent = new User(1L, "agent", "123456", RoleEnum.AGENT);
         this.ticket = new Tickets("Test", "Test", PriorityEnum.BAIXA, user);
-        this.ticket.setId(1L);
     }
 
     @Nested
-    class assignTicket {
+    class assignTicketTests {
 
         @Test
         void statusShouldBeEmProgressoWhenAssignPass() {
@@ -119,7 +119,7 @@ class TicketsServiceTest {
     }
 
     @Nested
-    class resolveTicket {
+    class resolveTicketTests {
 
         @Test
         void statusShouldBeResolvidoWhenResolvePass() {
