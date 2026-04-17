@@ -1,9 +1,6 @@
 package com.pneubras.tms.controller;
 
-import com.pneubras.tms.dto.request.AssignTicketRequest;
-import com.pneubras.tms.dto.request.CreateTicketsRequest;
-import com.pneubras.tms.dto.request.ReturnTicketRequest;
-import com.pneubras.tms.dto.request.UpdateTicketRequest;
+import com.pneubras.tms.dto.request.*;
 import com.pneubras.tms.dto.response.TicketsResponse;
 import com.pneubras.tms.service.TicketsService;
 import jakarta.validation.Valid;
@@ -67,9 +64,4 @@ public class TicketsController {
         return ResponseEntity.ok(dto);
     }
 
-    @PatchMapping("/{id}/return")
-    public ResponseEntity<TicketsResponse> returnTicket(@PathVariable Long id, @RequestBody @Valid ReturnTicketRequest data) {
-        TicketsResponse dto = ticketsService.returnTicket(id, data);
-        return ResponseEntity.ok(dto);
-    }
 }

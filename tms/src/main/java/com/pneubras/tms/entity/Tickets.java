@@ -1,5 +1,6 @@
 package com.pneubras.tms.entity;
 
+import com.pneubras.tms.exception.BusinessException;
 import com.pneubras.tms.utils.enums.PriorityEnum;
 import com.pneubras.tms.utils.enums.StatusEnum;
 import jakarta.persistence.*;
@@ -52,35 +53,19 @@ public class Tickets {
     @JoinColumn(name = "agent")
     private User agent;
 
-    public Tickets(String title, String description, PriorityEnum priority, int hours, User createdBy) {
+    public Tickets(String title, String description, PriorityEnum priority, User createdBy) {
         this.title = title;
         this.description = description;
         this.priority = priority;
         this.status = StatusEnum.ABERTO;
         this.createdAt = LocalDateTime.now();
-        this.dueAt = LocalDateTime.now().plusHours(hours);
+        this.dueAt = LocalDateTime.now().plusHours(priority.getHours());
         this.createdBy = createdBy;
-    }
-
-//  Tentar melhorar esse método
-    public static int checkDueHour(PriorityEnum priority) {
-        int dueHour = 0;
-        if (priority == PriorityEnum.BAIXA) {
-            dueHour = 72;
-        } else if (priority == PriorityEnum.MEDIA) {
-            dueHour = 48;
-        } else if (priority == PriorityEnum.ALTA) {
-            dueHour = 24;
-        } else if (priority == PriorityEnum.CRITICA) {
-            dueHour = 8;
-        }
-
-        return dueHour;
     }
 
     public void updateTicket(String title, String description) {
         if (title == null && description == null) {
-            throw new RuntimeException("The update failed. No data found.");
+            throw new BusinessException("The update failed. Data not found.");
         }
         if (title != null) {
             this.title = title;
@@ -93,19 +78,19 @@ public class Tickets {
 
     public void checkStatusAssign() {
         if (this.getStatus() != StatusEnum.ABERTO) {
-            throw new RuntimeException("The status should be ABERTO. Status: " + this.getStatus());
+            throw new BusinessException("The status should be ABERTO. Status: " + this.getStatus());
         }
     }
 
     public void checkStatusResolve() {
         if (this.getStatus() != StatusEnum.EM_PROGRESSO) {
-            throw new RuntimeException("The status should be EM_PROGRESSO. Status: " + this.getStatus());
+            throw new BusinessException("The status should be EM_PROGRESSO. Status: " + this.getStatus());
         }
     }
 
     public void checkStatusClose() {
         if (this.getStatus() != StatusEnum.RESOLVIDO) {
-            throw new RuntimeException("The status should be RESOLVIDO. Status: " + this.getStatus());
+            throw new BusinessException("The status should be RESOLVIDO. Status: " + this.getStatus());
         }
     }
 }

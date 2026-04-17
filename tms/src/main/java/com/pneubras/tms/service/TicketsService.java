@@ -1,9 +1,6 @@
 package com.pneubras.tms.service;
 
-import com.pneubras.tms.dto.request.AssignTicketRequest;
-import com.pneubras.tms.dto.request.CreateTicketsRequest;
-import com.pneubras.tms.dto.request.ReturnTicketRequest;
-import com.pneubras.tms.dto.request.UpdateTicketRequest;
+import com.pneubras.tms.dto.request.*;
 import com.pneubras.tms.dto.response.TicketsResponse;
 import com.pneubras.tms.entity.Tickets;
 import com.pneubras.tms.entity.User;
@@ -35,8 +32,7 @@ public class TicketsService {
                 () -> new EntityNotFoundException("User not found with login: " + data.login())
         );
 
-        int hours = Tickets.checkDueHour(data.priority());
-        Tickets ticket = new Tickets(data.title(), data.description(), data.priority(), hours, createdBy);
+        Tickets ticket = new Tickets(data.title(), data.description(), data.priority(), createdBy);
         ticketsRepository.save(ticket);
         return new TicketsResponse(ticket);
     }
@@ -105,20 +101,6 @@ public class TicketsService {
         ticket.checkStatusClose();
         ticket.setUpdatedAt(LocalDateTime.now());
         ticket.setStatus(StatusEnum.FECHADO);
-
-        return new TicketsResponse(ticket);
-    }
-
-    @Transactional
-    public TicketsResponse returnTicket(Long id, ReturnTicketRequest data) {
-        Tickets ticket = ticketsRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Ticket not found with id: " + id)
-        );
-
-        ticket.checkStatusClose();
-        ticket.setUpdatedAt(LocalDateTime.now());
-        ticket.setDescription(data.description());
-        ticket.setStatus(StatusEnum.EM_PROGRESSO);
 
         return new TicketsResponse(ticket);
     }
