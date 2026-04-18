@@ -1,0 +1,22 @@
+Desafio: Select & Join: Escreva uma query que retorne o nome do produto, o nome a categoria e o preço, apenas para produtos que custam mais de R$ 100,00.
+SELECT p.nome, c.nome, p.preco
+FROM PRODUTOS AS p INNER JOIN CATEGORIAS AS c ON p.categoria_id = c.id
+WHERE p.preco > 100;
+
+Desafio: Agregação: Escreva uma query que mostre o total de itens vendidos por categoria.
+SELECT c.nome, SUM(v.quantidade)
+FROM PRODUTOS AS p 
+INNER JOIN VENDAS AS v ON p.id = v.produto_id 
+INNER JOIN CATEGORIAS AS c ON c.id = p.categoria_id
+GROUP BY c.nome;
+
+Desafio: Filtro Temporal: Liste todos os produtos vendidos no mês de Janeiro de 2026.
+SELECT p.nome
+FROM PRODUTOS AS p INNER JOIN VENDAS AS v ON p.id = v.produto_id
+WHERE EXTRACT(MONTH FROM v.data_venda) = 1
+AND EXTRACT(YEAR FROM v.data_venda) = 2026;
+
+Desafio: Manipulação (DML): Escreva o comando para atualizar o preço de todos os produtos da categoria "Eletrônicos" em 10%.
+UPDATE PRODUTOS
+SET preco = preco*1.1
+WHERE categoria_id = (SELECT id FROM CATEGORIAS WHERE nome = 'Eletrônicos');
