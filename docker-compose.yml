@@ -1,0 +1,18 @@
+services:
+  backend:
+    image: vitormate/tms-api:latest
+    depends_on:
+      db
+    environment:
+      DB_HOST: db
+      DB_USER: root
+      DB_PASSWORD: root
+      POSTGRES_DB: mydb
+    ports:
+      - "8080:8080"
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: mydb
