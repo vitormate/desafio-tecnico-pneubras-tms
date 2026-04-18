@@ -26,7 +26,7 @@ Este projeto implementa uma API de gerenciamento de tickets de suporte (TMS).
 
 ```bash
 git clone https://github.com/seu-usuario/tms
-cd tms
+cd desafio-tecnico-pneubras-tms
 ```
 
 ### 2. Suba os containers
